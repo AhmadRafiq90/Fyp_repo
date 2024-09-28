@@ -4,7 +4,7 @@ import platform
 import re
 
 if platform.system() == 'Windows':
-    path_start = "G:/"
+    path_start = "E:/"
 elif platform.system() == 'Linux':
     path_start = '/media/ahmad/New Volume/'
 
@@ -14,7 +14,7 @@ csv_file_path = path_start + "Final Year Project/Dataset/PlantCLEF2024/PlantCLEF
 data = pd.read_csv(csv_file_path, delimiter=';')
 
 "Root directory where images are stored i.e (train, test, val folders)"
-root_directory = path_start + "Final Year Project/Dataset/PlantCLEF2024/test"
+root_directory = path_start + "Final Year Project/Dataset/PlantCLEF2024/train"
 
 "Specifically for linux since it doesn't allow special characters in filename"
 def clean_string(input_string):

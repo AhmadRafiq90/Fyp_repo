@@ -4,7 +4,7 @@ import platform
 import re
 
 if platform.system() == 'Windows':
-    path_start = "G:/"
+    path_start = "E:/"
 elif platform.system() == 'Linux':
     path_start = '/media/ahmad/New Volume/'
 
@@ -14,7 +14,7 @@ data = pd.read_csv(csv_file_path, delimiter=';')
 
 "Root directory where images are stored i.e (train, test, val folders)"
 
-root_directory = path_start + "Final Year Project/Dataset/PlantCLEF2024/test"
+root_directory = path_start + "Final Year Project/Dataset/PlantCLEF2024/train/"
 
 "List of Organ types"
 organ_types = ['fruit', 'flower', 'scan', 'branch', 'habit', 'bark', 'leaf']
@@ -45,29 +45,35 @@ for index, row in data.iterrows():
     species_name = str(row['species'])
     species_organ_type = str(row['organ'])
 
-    species_image_name = clean_string(species_image_name)
+    #species_image_name = clean_string(species_image_name)
     species_name = clean_string(species_name)
     
     organ_counts[species_organ_type] += 1
         
-    "Construct the directory path for the species id"
+    # "Construct the directory path for the species id"
     species_directory = os.path.join(root_directory, species_name)
     
-    "If the species is found"
+    # "If the species is found"
     if os.path.isdir(species_directory):
-        "then go inside the folder to rename images"
+        # then go inside the folder to rename images"
         for file_name in os.listdir(species_directory):
             if file_name == species_image_name:
-                "Construct Old and new file paths"
+                # "Construct Old and new file paths"
                 old_file_path = os.path.join(species_directory, file_name)
-                new_file_name = f"{species_name}_{species_organ_type}_{organ_counts[species_organ_type]}.jpg"
-                new_file_path = os.path.join(species_directory, new_file_name)
+                # "Deleting bark and other images which are not suitable for model training"
+                if species_organ_type != 'leaf' and species_organ_type != 'scan':
+                    os.remove(old_file_path)
+                    print("deleted: ", species_organ_type)
+                    continue
+
+                # new_file_name = f"{species_name}_{species_organ_type}_{organ_counts[species_organ_type]}.jpg"
+                # new_file_path = os.path.join(species_directory, new_file_name)
                 
-                "Rename the image file"
-                if not os.path.exists(new_file_path):
-                    os.rename(old_file_path, new_file_path)
-                    print(f"Renamed {old_file_path} to {new_file_path}")
-    else:
-        print(f"Directory {species_directory} not found")
+                # "Rename the image file"
+                # if not os.path.exists(new_file_path):
+                #     os.rename(old_file_path, new_file_path)
+                #     print(f"Renamed {old_file_path} to {new_file_path}")
+    # else:
+    #     print(f"Directory {species_directory} not found")
             
 print("Renaming complete.......................................")
