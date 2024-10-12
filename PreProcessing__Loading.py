@@ -7,15 +7,15 @@ import os
 from tensorflow.keras.callbacks import ModelCheckpoint
 import datetime
 
-def load_data(train_dir, img_size = (224, 224), batch_size = 16, validation_split = 0.2):
+def load_data(train_dir,img_size = (224, 224), batch_size = 16, validation_split = 0.2):
     "ImageGenerator for Data Augmentation and rescaling"
     datagen = ImageDataGenerator(
-        rescale = 1./255,                       #Normalizing to [0,1]"
+        rescale = 1./255,                          #Normalizing to [0,1]"
         validation_split = validation_split,     #20 % of data is reserved for testing(validation)
         rotation_range=40,  # Randomly rotate images by up to 40 degrees
         width_shift_range=0.2,  # Shift images horizontally by 20%
         height_shift_range=0.2,  # Shift images vertically by 20%
-        #shear_range=0.2,  # Shear transformation
+        shear_range=0.2,  # Shear transformation
         zoom_range=0.2,  # Random zoom on images by 20%
         horizontal_flip=True,  # Randomly flip images horizontally
         fill_mode='nearest',  # Fill pixels after transformations
@@ -29,7 +29,8 @@ def load_data(train_dir, img_size = (224, 224), batch_size = 16, validation_spli
         class_mode = 'categorical',            #For multi-class classification
         subset = 'training'                     #Training data
     )
-    
+    # After loading the data
+    #print("Class Indices:", train_generator.class_indices)
     "Validation data generator"
     validation_generator = datagen.flow_from_directory(
         train_dir, 
@@ -42,7 +43,7 @@ def load_data(train_dir, img_size = (224, 224), batch_size = 16, validation_spli
     return train_generator, validation_generator
 
     
-"Function to build the CNN model"
+"Function to build the CNN model"#
 def build_model(input_shape, num_classes):  #Input_shape = (height, width, channels etc), number of output class for classification
     "Conv2D -> Resposible for feature extraction"
     "MaxPooling2D -> These layers downsample feature maps while retaining important features"
@@ -121,36 +122,32 @@ def main():
     input_shape = (224, 224, 3)  # 3 represents the color channels (R, G, B)
     
     "Set the directory for training images"
-    train_dir = "/mnt/e/Final Year Project/Dataset/Selected_Species_Train"
+    #train_dir = "/media/ahmad/New Volume/potential datasets/archive2/train/"
     checkpoint_dir = f"./checkpoints/model_{current_time}"
-    #train_dir = "/mnt/f/Final Year Project/Dataset/Selected_Species_train" 
+    train_dir = "/mnt/e/potential datasets/archive_2/plantvillage dataset/color/" 
+    #val_dir = "/media/ahmad/New Volume/potential datasets/archive2/val/"
+    #val_dir = "/mnt/e/potential datasets/archive_2/plantvillage dataset/"
     "Load the data"
     train_generator, validation_generator = load_data(train_dir)
     
     "Get input shape and number of classes"
 
     num_classes = len(train_generator.class_indices)  # Determine the number of classes from directory structure
-    
+
     "Build the model"
     model = build_model(input_shape, num_classes)
     
     "Train the model with early stopping"
-    history = train_model(model, train_generator, validation_generator, epochs=100, patience=90, checkpoint_dir=checkpoint_dir)
+    history = train_model(model, train_generator, validation_generator, epochs=1, patience=90, checkpoint_dir=checkpoint_dir)
     
     # Printing training and validation accuracy
     print(f"Training Accuracy: {history.history['accuracy'][-1] * 100:.2f}%")
     print(f"Validation Accuracy: {history.history['val_accuracy'][-1] * 100:.2f}%")
     
     "Save the trained model"
-    model.save(f"{history.history['val_accuracy'][-1] * 100:.2f}%.keras")
+    model.save("test.keras")
+    #model.save(f"{history.history['val_accuracy'][-1] * 100:.2f}%.keras")
     
 if __name__ == "__main__":
     main()
-
-    
-
-
-    
-    
-    
-    
+ 
