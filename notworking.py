@@ -7,7 +7,7 @@ import os
 from tensorflow.keras.callbacks import ModelCheckpoint
 import datetime
 
-def load_data(train_dir,img_size = (224, 224), batch_size = 8, validation_split = 0.2):
+def load_data(train_dir,img_size = (224, 224), batch_size = 16, validation_split = 0.2):
     "ImageGenerator for Data Augmentation and rescaling"
     datagen = ImageDataGenerator(
         rescale = 1./255,                          #Normalizing to [0,1]"
@@ -44,7 +44,7 @@ def load_data(train_dir,img_size = (224, 224), batch_size = 8, validation_split 
 
     
 "Function to build the CNN model"#
-def build_model(input_shape, num_classes):  #Input_shape = (height, width, channels etc), number of output class for classification
+def build_alexnet_model(input_shape, num_classes):  #Input_shape = (height, width, channels etc), number of output class for classification
     "Conv2D -> Resposible for feature extraction"
     "MaxPooling2D -> These layers downsample feature maps while retaining important features"
     "Flatten -> Converts 2D feature maps to 1D vector which is necessary before feedding the data into a fully connected layer"
@@ -73,7 +73,7 @@ def train_model(model, train_generator, validation_generator, epochs, patience, 
         os.makedirs(checkpoint_dir)
     
     # Define checkpoint filepath
-    checkpoint_filepath = os.path.join(checkpoint_dir, "manual_deletion_model.keras")
+    checkpoint_filepath = os.path.join(checkpoint_dir, "model.keras")
     
     # Check if a checkpoint exists and load the model weights from the last saved checkpoint
     latest_checkpoint = tf.train.latest_checkpoint(checkpoint_dir)
@@ -116,6 +116,36 @@ def train_model(model, train_generator, validation_generator, epochs, patience, 
     
     return history
 
+
+def build_alexnet_model(input_shape, num_classes):
+    model = models.Sequential([
+        # First convolutional layer
+        layers.Conv2D(96, (11, 11), strides=(4, 4), activation='relu', input_shape=input_shape),
+        layers.MaxPooling2D((3, 3), strides=(2, 2)),
+
+        # Second convolutional layer
+        layers.Conv2D(256, (5, 5), padding='same', activation='relu'),
+        layers.MaxPooling2D((3, 3), strides=(2, 2)),
+
+        # Third, fourth, and fifth convolutional layers
+        layers.Conv2D(384, (3, 3), padding='same', activation='relu'),
+        layers.Conv2D(384, (3, 3), padding='same', activation='relu'),
+        layers.Conv2D(256, (3, 3), padding='same', activation='relu'),
+        layers.MaxPooling2D((3, 3), strides=(2, 2)),
+
+        # Flatten the output for fully connected layers
+        layers.Flatten(),
+
+        # Fully connected layers
+        layers.Dense(4096, activation='relu'),
+        layers.Dropout(0.5),
+        layers.Dense(4096, activation='relu'),
+        layers.Dropout(0.5),
+
+        # Output layer
+        layers.Dense(num_classes, activation='softmax')
+    ])
+    return model
 def main():
 
     current_time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -124,7 +154,7 @@ def main():
     "Set the directory for training images"
     #train_dir = "/media/ahmad/New Volume/potential datasets/archive2/train/"
     checkpoint_dir = f"./checkpoints/model_{current_time}"
-    train_dir = "/mnt/d/potential datasets/archive_2/plantvillage dataset/color/" 
+    train_dir = "/mnt/e/potential datasets/archive_2/plantvillage dataset/color/" 
     #val_dir = "/media/ahmad/New Volume/potential datasets/archive2/val/"
     #val_dir = "/mnt/e/potential datasets/archive_2/plantvillage dataset/"
     "Load the data"
@@ -135,7 +165,7 @@ def main():
     num_classes = len(train_generator.class_indices)  # Determine the number of classes from directory structure
 
     "Build the model"
-    model = build_model(input_shape, num_classes)
+    model = build_alexnet_model(input_shape, num_classes)
     
     "Train the model with early stopping"
     history = train_model(model, train_generator, validation_generator, epochs=100, patience=40, checkpoint_dir=checkpoint_dir)
@@ -145,7 +175,7 @@ def main():
     print(f"Validation Accuracy: {history.history['val_accuracy'][-1] * 100:.2f}%")
     
     "Save the trained model"
-    model.save("40sp_test.keras")
+    model.save("27sptest.keras")
     #model.save(f"{history.history['val_accuracy'][-1] * 100:.2f}%.keras")
     
 if __name__ == "__main__":

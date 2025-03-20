@@ -6,9 +6,9 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 # Load the model
 #model = tf.keras.models.load_model('/mnt/e/Final Year Project/Python/Data_Preprocessing/Fyp_repo/checkpoints/15sp_74.9pacc/model.keras')
-model = tf.keras.models.load_model('best_model.keras')
+model = tf.keras.models.load_model('custom_cnn_model.keras')
 # Directory containing test data
-test_data_dir = '/mnt/e/potential datasets/archive_2/plantvillage dataset/test/'
+test_data_dir = '/mnt/d/potential datasets/archive_2/plantvillage dataset/test/'
 
 # Image data generator for test data
 test_datagen = ImageDataGenerator(rescale=1./255)
@@ -16,8 +16,8 @@ test_datagen = ImageDataGenerator(rescale=1./255)
 # Create a test data generator
 test_generator = test_datagen.flow_from_directory(
     test_data_dir,
-    target_size=(224, 224),  # Adjust to your model's input size
-    batch_size=16,
+    target_size=(227, 227),  # Adjust to your model's input size
+    batch_size=6,
     class_mode='categorical',
     shuffle=False
 )
