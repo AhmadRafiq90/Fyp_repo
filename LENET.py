@@ -56,7 +56,7 @@ def build_model(input_shape, num_classes):  #Input_shape = (height, width, chann
         layers.MaxPooling2D((2, 2)),
         layers.Conv2D(128, (3, 3), activation='relu'),                            #Third Layer having 128 filters
         layers.MaxPooling2D((2, 2)),
-        layers.Flatten(),
+        layers.Flatten(),   
         layers.Dense(128, activation='relu'),                                     #128 neurons and uses the RELU activation function
         #layers.Dropout(0.5),
         layers.Dense(num_classes, activation='softmax')                           #Output Layer has number of neurons equal to num_classes using softmax activation function to produce
