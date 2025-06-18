@@ -182,7 +182,7 @@ python Test_models/runModel.py
 - **Binary Classification:** A simple yes/no decision (much easier than choosing between many options)
 - **GPU (Graphics Card):** Special computer chip that's really good at the math needed for AI (like having a calculator that can do 1000 calculations at once)
 
-## 🤔 Why Some Things Failed
+##  Why Some Things Failed
 
 - **EfficientNet:** Too smart for our dataset size - like bringing a PhD professor to teach kindergarten math
 - **CBAM:** Great idea but needed supercomputer-level resources we didn't have
